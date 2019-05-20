@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>KeyboardInputCanvas.html &copy; Kari Laitinen</title>
+
+<!-- 
+   http://www.naturalprogramming.com
+
+   2012-03-16 File created.
+   2014-02-07 Last modification.
+
+   This program shows how to
+      - react to keyboard events
+      - show numbers in hexadecimal form
+ 
+   This program displays the codes of the pressed keys to the
+   screen. It does not always show the typed characters. A single key
+   can represent several characters. For example, the A key
+   can be used to produce both the uppercase A and the lowercase a.
+   The onkeydown and onkeyup events deal with codes of the pressed
+   keys, while the onkeypress event can be used to find out
+   which character was typed.
+
+   Documentation related to keyboard events:
+     http://www.w3schools.com/jsref/dom_obj_event.asp
+
+   See also the notes at the end of this file.
+-->
+
+<!-- Next we import JavaScript code that allows us to use a function
+     named sprintf() which works in the same way as corresponding
+     functions in the C language or the String.format() method of Java.
+-->
+
+<script src="../basics/importables/sprintf.js"></script>
+
+<script type="text/javascript">
+
+var large_font   =  "bold 24px monospace" ;
+
+var code_of_last_pressed_key  =  63 ; // Code of question mark ?
+
+// In the following functions toString( 16 ) is used to convert
+// the received key codes into hexadecimal values.
+
+// As the key codes are printed to the (web) console that is available
+// in some browsers, it is possible to see in detail what happens
+// when keys are pressed. You can find out that onkeypress events are
+// generated mainly for the visible characters, and then the received
+// character code represents the typed character.
+
+function on_key_down( event )
+{
+   code_of_last_pressed_key = event.which ;
+
+   console.log( "\n on_key_down()  " + event.which.toString( 16 ) ) ;
+   draw_on_canvas() ;
+}
+
+function on_key_press( event )
+{
+   console.log( "\n on_key_press() " + event.which.toString( 16 ) ) ;
+   draw_on_canvas() ;
+}
+
+function on_key_up( event )
+{
+   console.log( "\n on_key_up()   " + event.which.toString( 16 ) ) ;
+   draw_on_canvas() ;
+}
+
+
+function draw_on_canvas()
+{
+   var canvas = document.getElementById( "keyboard_input_canvas" ) ;
+   var context = canvas.getContext("2d") ;
+
+   // We'll fill the entire canvas with light color, which overdraws
+   // the previous drawings.
+
+   context.fillStyle = "rgb(  200, 220, 255 )" ; // Light blueish
+   context.fillRect( 0, 0, canvas.width, canvas.height ) ;
+
+   context.fillStyle = "black" ;
+   context.font = large_font ;
+
+   // The sprintf() function returns a string in which 
+   //    - in place of %c the key code is shown as a character,
+   //    - in place of %X the key code is shown in hexadecimal form
+   //    - in place of %d the key code is shown in decimal form
+
+   context.fillText( sprintf( "Last pressed key:  %c  %X  %d",
+                              code_of_last_pressed_key,
+                              code_of_last_pressed_key,
+                              code_of_last_pressed_key ),
+                     100, 200 ) ;
+
+   if ( code_of_last_pressed_key  ==  112 )
+   {
+      context.fillText( "You pressed the F1 key", 100, 250 ) ;
+   }
+   else if ( code_of_last_pressed_key  ==  38 )
+   {
+      context.fillText( "You pressed the Arrow Up key", 100, 250 ) ;
+   }
+   else if ( code_of_last_pressed_key  ==  40 )
+   {
+      context.fillText( "You pressed the Arrow Down key", 100, 250 ) ;
+   }
+}
+
+</script>
+
+<style type="text/css">
+
+   #centered
+   {
+      width: 600px;
+      height: 400px;
+      margin: 30px auto;    /* top and bottom margins are 30p;
+                               right and left margins are automatic */
+      border: 1px solid black;
+   }
+
+</style>
+</head>
+
+<!-- The methods that will react to key pressings will be connected to
+     the body element, not the canvas element.  -->
+
+<body onload     = "draw_on_canvas()"
+      onkeydown  = "on_key_down( event )"
+      onkeypress = "on_key_press( event )"
+      onkeyup    = "on_key_up( event )">
+
+   <div id=centered>
+      <canvas id=keyboard_input_canvas  width=600 height=400>
+      </canvas>
+
+   </div>
+
+</body>
+</html>
+
+<!-- NOTES:
+
+   The sprintf() function that was 'imported' to this program
+   is a nice function to format strings. It is useful to learn to
+   use this function as similar formatting mechanisms are used
+   in the C, Java, Python, and other languages.
+
+   If the sprintf() function was not in use in this program,
+   an almost equivalent output could be produced with a statement like
+
+      context.fillText( "Last pressed key: " +
+
+                        String.fromCharCode( code_of_last_pressed_key ) +
+
+                        "  "  +  code_of_last_pressed_key.toString( 16 ) +
+
+                        "  "  +  code_of_last_pressed_key,
+                        100, 200 ) ;
+
+
+-->

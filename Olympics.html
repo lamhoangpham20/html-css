@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Olympics.html &copy; Kari Laitinen</title>
+<!-- 
+   2015-02-06 This file was created for http://www.naturalprogramming.com/
+   2016-10-21 New JavaScript (ECMAScript 6) class in use
+
+   This page demonstrates how to
+      - specify a JavaScript class
+      - use an initialized array of objects
+      - handle several buttons with a single function
+-->
+
+<style>
+
+.centered
+{
+   text-align: center;
+   margin:     64px auto 32px;  /* top and bottom margins are set,
+                                   right and left margins are automatic */
+   font-family: monospace ;     /* Characters will have equal widths. */
+}
+
+#area_for_buttons
+{
+  width:      660px;
+  text-align: center;
+  margin:     16px auto;    /* top and bottom margins are set,
+                               right and left margins are automatic */
+}
+
+button
+{
+   margin:  4px ; /* This makes some space between the buttons. */ 
+   background-color: Lavender ;
+}
+
+
+</style>
+
+<script>
+
+// Here we define a JavaScript class named Olympics.
+
+class Olympics
+{
+   constructor( given_olympic_year,
+                given_olympic_city,
+                given_olympic_country )
+   {
+      this.olympic_year = given_olympic_year ;
+      this.olympic_city = given_olympic_city ;
+      this.olympic_country = given_olympic_country ;
+   }
+
+   // Next, we specify three member functions, or getters, for
+   // the class Olympics.
+
+   get_year()
+   {
+      return this.olympic_year ;
+   }
+
+   get_city()
+   {
+      return this.olympic_city ;
+   }
+
+   get_country()
+   {
+      return this.olympic_country ;
+   }
+}
+
+// The following is an initialized array that contains references
+// to Olympics objects.
+
+var  olympics_list  =
+[
+   new Olympics( 1896, "Athens",   "Greece" ),
+   new Olympics( 1900, "Paris",    "France" ),
+   new Olympics( 1904, "St. Louis", "U.S.A." ),
+   new Olympics( 1906, "Athens",   "Greece"  ), 
+   new Olympics( 1908, "London",   "Great Britain" ),
+   new Olympics( 1912, "Stockholm","Sweden" ),
+   new Olympics( 1920, "Antwerp",  "Belgium"   ),
+   new Olympics( 1924, "Paris",    "France"    ),
+   new Olympics( 1928, "Amsterdam","Netherlands"),
+   new Olympics( 1932, "Los Angeles", "U.S.A."),
+   new Olympics( 1936, "Berlin",  "Germany"   ),
+   new Olympics( 1948, "London",  "Great Britain" ),
+   new Olympics( 1952, "Helsinki","Finland"  ),
+   new Olympics( 1956, "Melbourne","Australia" ),
+   new Olympics( 1960, "Rome",     "Italy"   ),
+   new Olympics( 1964, "Tokyo",    "Japan"   ),
+   new Olympics( 1968, "Mexico City","Mexico" ),
+   new Olympics( 1972, "Munich",   "West Germany" ),
+   new Olympics( 1976, "Montreal", "Canada"  ),
+   new Olympics( 1980, "Moscow",   "Soviet Union" ),
+   new Olympics( 1984, "Los Angeles","U.S.A."),
+   new Olympics( 1988, "Seoul",    "South Korea"),
+   new Olympics( 1992, "Barcelona","Spain"   ),
+   new Olympics( 1996, "Atlanta",  "U.S.A." ),
+   new Olympics( 2000, "Sydney",   "Australia" ),
+   new Olympics( 2004, "Athens",   "Greece"  ),
+   new Olympics( 2008, "Beijing",  "China"   ),
+   new Olympics( 2012, "London",   "Great Britain" ) 
+] ;
+
+var winter_olympics_list =
+[
+   new Olympics( 1924, "Chamonix",    "France"    ),
+   new Olympics( 1928, "St.Moritz",   "Switzerland"),
+   new Olympics( 1932, "Lake Placid", "U.S.A."),
+   new Olympics( 1936, "Garmisch-Partenkirchen", "Germany"   ),
+   new Olympics( 1948, "St.Moritz",   "Switzerland"),
+   new Olympics( 1952, "Oslo",        "Norway"  ),
+   new Olympics( 1956, "Cortina d'Ampezzo","Italy" ),
+   new Olympics( 1960, "Squaw Valley","U.S.A."   ),
+   new Olympics( 1964, "Innsbruck",   "Austria" ),
+   new Olympics( 1968, "Grenoble",    "France" ),
+   new Olympics( 1972, "Sapporo",    "Japan"),
+   new Olympics( 1976, "Innsbruck",  "Austria"  ),
+   new Olympics( 1980, "Lake Placid","U.S.A."),
+   new Olympics( 1984, "Sarajevo",   "Yugoslavia"),
+   new Olympics( 1988, "Calgary",    "Canada"),
+   new Olympics( 1992, "Albertville","France"   ),
+   new Olympics( 1994, "Lillehammer","Norway" ),
+   new Olympics( 1998, "Nagano",     "Japan" ),
+   new Olympics( 2002, "Salt Lake City","U.S.A." ),
+   new Olympics( 2006, "Turin",      "Italy"   ),
+   new Olympics( 2010, "Vancouver",  "Canada" ),
+   new Olympics( 2014, "Sochi",      "Russia" )
+
+] ;
+var numbers_to_roman_numerals =
+
+  [ "???", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX",
+   "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX",
+   "XX", "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX",
+   "XXX", "XXXI", "XXXII", "XXXIII", "XXXIV", "XXXV", "XXXVI", "XXXVII", "XXXVIII", "XXXIX",
+   "XL", "XLI", "XLII", "XLIII", "XLIV", "XLV", "XLVI", "XLVII", "XLVIII", "XLIX",
+   "L", "LI", "LII", "LIII", "LIV", "LV", "LVI", "LVII", "LVIII", "LIX" ] ;
+var last_clicked_button = null ;
+
+function olympic_year_was_selected( pressed_button )
+{
+   var selected_year = Number( pressed_button.textContent ) ;
+   var olympiad = Math.floor( ( selected_year - 1896 ) / 4 ) + 1 ;
+   var selected_olympics = null ;
+   var olympics_index = 0 ;
+
+   while ( selected_olympics == null )
+   {
+      if ( olympics_list[ olympics_index ].get_year() == selected_year )
+      {
+         selected_olympics = olympics_list[ olympics_index ] ;
+      }
+
+      olympics_index ++ ;
+   }
+   if ( pressed_button.name == "summer_olympics_button" )
+   {
+   document.getElementById( "olympic_games_text" ).innerHTML =
+             "Summer Olympic Games " + selected_olympics.get_year() +" Olympiad " + numbers_to_roman_numerals[olympiad];
+   document.getElementById( "city_and_country_text" ).innerHTML = "<a target=\"_blank\" title=\"More info in Wikipedia\" href=\"https://en.wikipedia.org/wiki/" + selected_olympics.get_year() + "_Summer_Olympics\"> "
+              + selected_olympics.get_city() + ", " +
+             selected_olympics.get_country() + "</a>" ;
+   }
+   else
+   {
+   document.getElementById( "olympic_games_text" ).innerHTML =
+             "Winter Olympic Games " + selected_olympics.get_year() +" Olympiad " + numbers_to_roman_numerals[olympiad];
+   document.getElementById( "city_and_country_text" ).innerHTML = "<a target=\"_blank\" title=\"More info in Wikipedia\" href=\"https://en.wikipedia.org/wiki/" + selected_olympics.get_year() + "_Winter_Olympics\"> "
+              + selected_olympics.get_city() + ", " +
+             selected_olympics.get_country() + "</a>" ;
+   }
+   
+
+   // We'll change the color of the button that was clicked. The original
+   // color of the previously clicked button will be first reinstated.
+
+   if ( last_clicked_button != null )
+   {
+      last_clicked_button.style.background = "Lavender" ;
+   }
+
+   last_clicked_button = pressed_button ;
+
+   last_clicked_button.style.background = "LightGreen" ;
+}
+</script>
+</head>
+
+<body>
+   <div class=centered>
+
+      <p><img src="images/olympic_rings_without_rims.png" width=200></p>
+
+      <!-- The following texts will be modified by the function
+           olympic_year_was_selected(). -->
+
+      <h1 id=olympic_games_text>Olympic Games Data Finder</h1>
+
+      <h1 id=city_and_country_text>Press a button!</h1>
+
+   </div>
+
+   <div id=area_for_buttons>
+
+      <script>
+         // Here we have JavaScript code inside an HTML <div> element.
+         // This JavaScript code is executed at the place where it is located.
+         // This generates the buttons that contain olympic years.
+
+         var number_of_buttons_on_current_line = 0 ;
+
+         for ( var olympics_index in olympics_list )
+         {
+            var olympic_year = olympics_list[ olympics_index ].get_year() ;
+
+            document.write( "<button name=\"summer_olympics_button\" onclick=\"olympic_year_was_selected( this )\">"
+                          + olympic_year + "</button>" ) ;
+
+            number_of_buttons_on_current_line ++ ;
+
+            if ( number_of_buttons_on_current_line >= 6 )
+            {
+               document.write( "<br>&nbsp;" ) ; // start a new line
+               number_of_buttons_on_current_line = 0 ;
+            }
+         }
+      </script>
+   </div>
+   <div id=area_for_buttons>
+      <script>
+         // Here we have JavaScript code inside an HTML <div> element.
+         // This JavaScript code is executed at the place where it is located.
+         // This generates the buttons that contain olympic years.
+
+         var number_of_buttons_on_current_line = 0 ;
+
+         for ( var olympics_index in winter_olympics_list )
+         {
+            var olympic_year = olympics_list[ olympics_index ].get_year() ;
+
+            document.write( "<button name=\"winter_olympics_button\" onclick=\"olympic_year_was_selected( this )\">"
+                          + olympic_year + "</button>" ) ;
+
+            number_of_buttons_on_current_line ++ ;
+
+            if ( number_of_buttons_on_current_line >= 6 )
+            {
+               document.write( "<br>&nbsp;" ) ; // start a new line
+               number_of_buttons_on_current_line = 0 ;
+            }
+         }
+      </script>
+   </div>
+
+</body>
+</html> 
+
+
+<!--
+
+Below you'll find some JavaScript arrays that you can use
+when you do the exercises with this HTML file.
+
+
+var numbers_to_roman_numerals =
+
+  [ "???", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX",
+   "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX",
+   "XX", "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX",
+   "XXX", "XXXI", "XXXII", "XXXIII", "XXXIV", "XXXV", "XXXVI", "XXXVII", "XXXVIII", "XXXIX",
+   "XL", "XLI", "XLII", "XLIII", "XLIV", "XLV", "XLVI", "XLVII", "XLVIII", "XLIX",
+   "L", "LI", "LII", "LIII", "LIV", "LV", "LVI", "LVII", "LVIII", "LIX" ] ;
+         
+var winter_olympics_list =
+[
+   new Olympics( 1924, "Chamonix",    "France"    ),
+   new Olympics( 1928, "St.Moritz",   "Switzerland"),
+   new Olympics( 1932, "Lake Placid", "U.S.A."),
+   new Olympics( 1936, "Garmisch-Partenkirchen", "Germany"   ),
+   new Olympics( 1948, "St.Moritz",   "Switzerland"),
+   new Olympics( 1952, "Oslo",        "Norway"  ),
+   new Olympics( 1956, "Cortina d'Ampezzo","Italy" ),
+   new Olympics( 1960, "Squaw Valley","U.S.A."   ),
+   new Olympics( 1964, "Innsbruck",   "Austria" ),
+   new Olympics( 1968, "Grenoble",    "France" ),
+   new Olympics( 1972, "Sapporo",    "Japan"),
+   new Olympics( 1976, "Innsbruck",  "Austria"  ),
+   new Olympics( 1980, "Lake Placid","U.S.A."),
+   new Olympics( 1984, "Sarajevo",   "Yugoslavia"),
+   new Olympics( 1988, "Calgary",    "Canada"),
+   new Olympics( 1992, "Albertville","France"   ),
+   new Olympics( 1994, "Lillehammer","Norway" ),
+   new Olympics( 1998, "Nagano",     "Japan" ),
+   new Olympics( 2002, "Salt Lake City","U.S.A." ),
+   new Olympics( 2006, "Turin",      "Italy"   ),
+   new Olympics( 2010, "Vancouver",  "Canada" ),
+   new Olympics( 2014, "Sochi",      "Russia" )
+
+] ;
+
+-->
+
+<!--
+    This was a useful page when this program was modified on 2016-10-21
+
+    http://es6-features.org/#ClassDefinition
+-->
+
+

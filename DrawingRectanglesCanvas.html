@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>DrawingRectanglesCanvas.html &copy; Kari Laitinen</title>
+<!-- 
+   http://www.naturalprogramming.com
+
+   2014-02-13 File created.
+   2016-10-23 Class Point defined with keyword 'class'.
+   2017-02-12 Last modification.
+
+   This page displays a canvas on which you can draw rectangles
+   with a mouse or some other kind of pointing device.
+   This file is a modified version of DrawingLinesCanvas.html
+
+   This program shows how to
+      - react to mouse events
+      - use JavaScript arrays
+      - how to specify a simple Point class
+ 
+   Documentation related to Mouse Event objects:
+     http://www.w3schools.com/jsref/dom_obj_event.asp
+-->
+
+<script>
+
+// Below we define a class named Point. A Point object can store
+// the x and y coordinates of a point in a graphical drawing surface.
+
+class Point
+{
+   constructor( given_x_coordinate,
+                given_y_coordinate )
+   {
+      this.x = given_x_coordinate ;
+      this.y = given_y_coordinate ;
+   }
+}
+var mouse_is_over = false;
+
+var starting_points  =  [] ;
+var ending_points    =  [] ;
+var new_starting_point  = null ;
+var new_ending_point  = null ;
+var new_rectangle_is_being_drawn = false ;
+var mouse_is_over_canvas = false ;
+function on_mouse_over( event )
+{
+   // The mouse was brought over the canvas element.
+
+   mouse_is_over = true;
+
+   draw_on_canvas() ;
+}
+
+function on_mouse_out( event )
+{
+   // The mouse was moved out from the canvas element.
+
+   mouse_is_over = false;
+
+   draw_on_canvas() ;
+}
+
+
+function on_mouse_down( event )
+{
+   // The mouse or some other pointing device was
+   // pressed down in the canvas area.
+
+   var pointer_position_x = event.offsetX ;
+   var pointer_position_y = event.offsetY ;
+
+   new_starting_point = new Point( pointer_position_x,
+                                   pointer_position_y ) ;
+   if (event.ctrlKey == true )
+{
+   if (event.shiftKey == true)
+   {
+      starting_points = [];
+      ending_points = [];
+   }
+   else if (event.shiftKey == false)
+   {
+         starting_points.pop() ;
+         ending_points.pop() ;
+   }
+}
+else 
+{
+   new_starting_point = new Point( pointer_position_x,
+                                   pointer_position_y ) ;
+   new_rectangle_is_being_drawn = true ;
+}  
+   draw_on_canvas() ;
+}
+
+
+function on_mouse_move( event )
+{
+   if ( new_rectangle_is_being_drawn == true )
+   {
+      var pointer_position_x = event.offsetX ;
+      var pointer_position_y = event.offsetY ;
+
+      new_ending_point = new Point( pointer_position_x,
+                                    pointer_position_y ) ;
+                                    
+
+      draw_on_canvas() ;
+   }
+}
+
+function on_mouse_up( event )
+{
+   if ( new_rectangle_is_being_drawn == true )
+   {
+      var pointer_position_x = event.offsetX ;
+      var pointer_position_y = event.offsetY ;
+
+      // The drawing of a new rectangle is finished now. The start and
+      // end points of the new rectangle will be pushed to the end
+      // of the arrays.
+
+      starting_points.push( new_starting_point ) ;
+      ending_points.push( new Point( pointer_position_x,
+                                     pointer_position_y ) ) ;
+      new_rectangle_is_being_drawn = false ;
+      new_starting_point = null ;
+      new_ending_point   = null ;
+      
+
+      draw_on_canvas() ;
+   }
+}
+
+//  The following function, which is called from 
+//  draw_on_canvas(), adjusts coordinates so that the rectangle
+//  is shown "in a correct way" in relation to the mouse movement.
+
+function draw_filled_rectangle( given_context,
+                                starting_point,
+                                ending_point,
+                                filling_color )
+{
+   var upper_left_corner_x = starting_point.x ;
+   var upper_left_corner_y = starting_point.y ;
+   var rectangle_width  = ending_point.x - starting_point.x ;
+   var rectangle_height = ending_point.y - starting_point.y ;
+   
+
+   if ( rectangle_width < 0 )
+   {
+      rectangle_width  = - rectangle_width ;
+      upper_left_corner_x -= rectangle_width ;
+   }
+
+   if ( rectangle_height < 0 )
+   {
+      rectangle_height  =  - rectangle_height ;
+      upper_left_corner_y  -=  rectangle_height ;         
+   }
+
+   given_context.save() ;
+
+   given_context.fillStyle = filling_color ;
+   given_context.strokeStyle = "black" ;
+   given_context.lineWidth = 2 ;
+
+   given_context.fillRect( upper_left_corner_x,
+                           upper_left_corner_y,
+                           rectangle_width,
+                           rectangle_height ) ;
+
+   given_context.strokeRect( upper_left_corner_x,
+                             upper_left_corner_y,
+                             rectangle_width,
+                             rectangle_height ) ;
+
+   given_context.restore() ;
+}
+
+function draw_on_canvas()
+{
+   var canvas = document.getElementById( "drawing_rectangles_canvas" ) ;
+   var context = canvas.getContext("2d") ;
+   
+   // We'll fill the entire canvas with light color, which overdraws
+   // the previous drawings.
+
+   
+   context.fillRect( 0, 0, canvas.width, canvas.height ) ;
+   if (mouse_is_over == true)
+   {
+      context.fillStyle  = "lightblue";
+   }
+   else
+   {
+      context.fillStyle  = "beige";
+   }
+   
+   context.globalAlpha = 1.0;
+   var rectangle_colors = [ "Teal", "Tomato", "Turquoise", "Violet",
+                            "YellowGreen", "Gold" , "Blue"] ;
+   
+   // The following loop draws all the rectangles that the user has drawn.
+
+   for ( var rectangle_index  =  0 ;
+             rectangle_index  <  starting_points.length ;
+             rectangle_index  ++ )
+   {
+      // Method pop() removes and returns the last color
+      // of the array.
+
+      var color_from_list = rectangle_colors.pop() ;
+
+      draw_filled_rectangle( context,
+                             starting_points[ rectangle_index ],
+                             ending_points[ rectangle_index ],
+                             color_from_list ) ;
+
+      // Method unshift() puts the used color to the beginning of the array.
+      // This way the the used color will be used again after all
+      // other colors have been used.
+
+      rectangle_colors.unshift( color_from_list ) ;
+   }
+
+   if ( new_ending_point != null )
+   {
+      // We will draw a not-yet-finished rectangle.
+
+      draw_filled_rectangle( context,
+                             new_starting_point,
+                             new_ending_point,
+                             "Snow" ) ;  // Almost white
+   }
+}
+
+</script>
+
+<style>
+
+   #centered
+   {
+      width: 880px;
+      height: 620px;
+      margin: 30px auto;    /* top and bottom margins are set
+                               right and left margins are automatic */
+      border: 1px solid black;
+   }
+
+</style>
+</head>
+
+<body onload="draw_on_canvas()">
+
+   <div id=centered>
+      <canvas id=drawing_rectangles_canvas
+         width=880 height=620
+         onmousedown = "on_mouse_down( event )"
+         onmousemove = "on_mouse_move( event )"
+         onmouseup   = "on_mouse_up( event )"
+         onmouseover   = "on_mouse_over( event )"
+         onmouseout   = "on_mouse_out( event )">
+      </canvas>
+
+   </div>
+
+</body>
+</html>
+

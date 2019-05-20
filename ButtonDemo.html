@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ButtonDemo.html by Kari Laitinen</title>
+<!-- 
+   2014-01-10 File created.
+   2015-02-27 Last modification
+
+   This page demonstrates how to react to the pressing of a button,
+   and how to change the text in a h1 element.
+
+   The following link may be useful when you study this program:
+      http://www.w3schools.com/jsref/dom_obj_all.asp
+
+-->
+
+<style>
+
+.centered
+{
+   text-align: center;
+   margin:     64px auto;    /* top and bottom margins are set,
+                                right and left margins are automatic */
+}
+button:hover
+ {
+ background-color : GoldenRod ;
+ }
+ 
+
+</style>
+
+<script>
+
+// The following JavaScript function is able to modify the text inside
+// the HTML tags <h1> and </h1>. The HTML element is identified with its
+// id "text_on_screen".
+	var day_index = 0 ;
+	var days_of_week = [ "Monday", "Tuesday", "Wednesday", "Thursday",
+ "Friday", "Saturday", "Sunday" ] ;
+function change_day()
+{
+	day_index ++;
+	if ( day_index >= days_of_week.length)
+	{
+	day_index = 0;
+	}
+	day_element = document.getElementById( "day_on_screen" );
+	day_element.innerHTML = days_of_week[ day_index ] ;
+}
+	var month_index = 0;
+	var months_of_year = [ "January", "February", "March", "April", "May", "June", "July", 
+							"August", "September", "October", "November", "December" ];
+function change_month()
+{
+	month_index ++;
+	if ( month_index >= months_of_year.length)
+	{
+	month_index = 0;
+	}
+	month_element = document.getElementById( "month_on_screen" );
+	month_element.innerHTML = months_of_year[ month_index ];
+}
+</script>
+
+</head>
+
+<body style="background-color: cyan">
+
+   <h1 id=day_on_screen class=centered style="color:red">Monday</h1>
+
+   <div class=centered>
+      <button onclick="change_day()">Change day</button>
+   </div>
+
+   <h1 id=month_on_screen class=centered style="color: rgba(138, 138, 61, 0.473)">January</h1>
+   <div class=centered>
+		<button onclick="change_month()">Change Month</button>
+		</div>
+</body>
+</html> 

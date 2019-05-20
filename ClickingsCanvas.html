@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>ClickingsCanvas.html &copy; Kari Laitinen</title>
+<!-- ClickingsCanvas.html (c) Copyright Kari Laitinen
+
+   2012-02-26 This page was created.
+   2016-03-23 Last modification.
+
+   This program shows how to:
+      - react to the event when a mouse button is pressed down
+      - define array objects and add new elements to the
+        end of arrays
+
+
+   See notes at the end of this file.
+-->
+
+<script type="text/javascript">
+
+// We make here two arrays for storing the coordinates of
+// the clicked points. In the beginning the arrays are empty.
+var clicked_point_x = -1 ; 
+  var clicked_point_y = -1;
+  var mouse_clicked = false; 
+var text_to_show = "Click!" ;
+var large_font = "bold 24px serif" ;
+   function on_mouse_down( event )
+{
+   // Handling mouse events is somewhat complicated as 
+   // different browsers have different attributes in the
+   // event object. Below we first test if the attributes
+   // exist, and then we use them.
+
+   // The following variables will be used to store the
+   // coordinates relative to the upper left corner of the canvas.
+
+
+   if ( event.offsetX && event.offsetY )
+   {
+      // Safari, IE, Chrome, and Opera have the offsetX
+      // and offsetY attributes.
+
+      clicked_point_x = event.offsetX ;
+      clicked_point_y = event.offsetY ;
+   }
+   else if ( event.clientX && event.clientY )
+   {
+      // Safari and Firefox have clientX and clientY attributes.
+      // It seems that this "else if" block is needed only because
+      // of Firefox.
+
+      var canvas = event.target ;
+
+      clicked_point_x = event.clientX - canvas.offsetLeft ;
+      clicked_point_y = event.clientY - canvas.offsetTop ; 
+   }
+
+   // console.log( " XXX " ) ;
+
+   // With the push() method we add new elements to the end
+   // of the two arrays.
+
+   
+   mouse_clicked = true;
+   draw_on_canvas() ;   // This call updates the screen.
+}
+
+function on_mouse_up( event )
+{
+   if ( event.offsetX && event.offsetY )
+   {
+      // Safari, IE, Chrome, and Opera have the offsetX
+      // and offsetY attributes.
+
+      clicked_point_x = event.offsetX ;
+      clicked_point_y = event.offsetY ;
+   }
+   else if ( event.clientX && event.clientY )
+   {
+      // Safari and Firefox have clientX and clientY attributes.
+      // It seems that this "else if" block is needed only because
+      // of Firefox.
+
+      var canvas = event.target ;
+
+      clicked_point_x = event.clientX - canvas.offsetLeft ;
+      clicked_point_y = event.clientY - canvas.offsetTop ; 
+   }
+
+   mouse_clicked  =  false ;
+
+   draw_on_canvas() ;
+}
+
+
+   // The following loop draws all the clicked points each
+   // time this function is called.
+
+   function draw_on_canvas()
+{
+   var canvas = document.getElementById( "canvas_for_clickings" ) ;
+   var context = canvas.getContext("2d") ;
+   
+   // We'll fill the entire canvas with light color.
+
+   context.fillStyle = "LightYellow" ;
+   context.fillRect( 0, 0, canvas.width, canvas.height ) ;
+   context.fillStyle = "Blue" ; 
+   if (mouse_clicked == true )
+   {
+      context.fillStyle ="red";
+   }
+   else if (mouse_clicked == false  )
+   {
+      context.fillStyle = "green";
+   }
+    
+
+   // The following loop draws all the clicked points each
+   // time this function is called.
+   
+      text_to_show = "Click!";
+   
+   if( clicked_point_x < canvas.width/2 && clicked_point_x > 0 )
+   {
+      if (clicked_point_y < canvas.height/2 && clicked_point_y > 0)
+      {
+         text_to_show = "North West";
+         context.fillRect(0,0,canvas.width/2,canvas.height/2);
+      }
+      else if (clicked_point_y > canvas.height/2 )
+      {
+         text_to_show = " South West";
+         context.fillRect(0,canvas.height/2,canvas.width/2,canvas.height/2);
+      }
+   }
+   else if( clicked_point_x > canvas.width/2 && clicked_point_x < canvas.width )
+   {
+      if ( clicked_point_y < canvas.height / 2 )
+      {
+         text_to_show = "North East"; 
+         context.fillRect(canvas.width/2,0,canvas.width/2,canvas.height/2);
+      }
+      else
+      {
+         text_to_show = "South East";
+         context.fillRect(canvas.width/2,canvas.height/2,canvas.width/2,canvas.height/2);
+      }
+   }
+   else
+   {
+      text_to_show = "Click !";
+   }
+   
+   context.font = large_font; 
+   
+   context.strokeText( text_to_show ,canvas.width/2 - context.measureText( text_to_show ).width/2, canvas.height/2 ) ;
+   
+}
+
+</script>
+
+<style type="text/css">
+
+   #centered
+   {
+      width: 600px;
+      height: 500px;
+      margin: 30px auto;    /* top and bottom margins are 30p;
+                               right and left margins are automatic */
+      border: 1px solid black;
+   }
+
+</style>
+</head>
+
+<body onload="draw_on_canvas()">
+
+   <div id=centered>
+
+      <!-- We'll specify a canvas so that method on_mouse_down() will be
+           called when onmousedown event takes place within the canvas area -->
+
+      <canvas id=canvas_for_clickings
+         width=600 height=500
+         onmousedown = "on_mouse_down( event )"
+         onmouseup="on_mouse_up( event )">
+      </canvas>
+   </div>
+
+</body>
+</html>
+
+
+<!--
+
+/*  Below you find an earlier version of on_mouse_down().
+    The current version is simpler as it seems that most
+    major browsers now support the offsetX and offsetY
+    properties.
+*/
+
+function on_mouse_down( event )
+{
+   // Handling mouse events is somewhat complicated as 
+   // different browsers have different attributes in the
+   // event object. Below we first test if the attributes
+   // exist, and then we use them.
+
+   // The following variables will be used to store the
+   // coordinates relative to the upper left corner of the canvas.
+
+   var clicked_point_x = 10 ; 
+   var clicked_point_y = 10 ;
+
+   if ( event.offsetX && event.offsetY )
+   {
+      // Safari, IE, Chrome, and Opera have the offsetX
+      // and offsetY attributes.
+
+      clicked_point_x = event.offsetX ;
+      clicked_point_y = event.offsetY ;
+   }
+   else if ( event.clientX && event.clientY )
+   {
+      // Safari and Firefox have clientX and clientY attributes.
+      // It seems that this "else if" block is needed only because
+      // of Firefox.
+
+      var canvas = event.target ;
+
+      clicked_point_x = event.clientX - canvas.offsetLeft ;
+      clicked_point_y = event.clientY - canvas.offsetTop ; 
+   }
+
+   // console.log( " XXX " ) ;
+
+   // With the push() method we add new elements to the end
+   // of the two arrays.
+
+   x_coordinates_of_clickings.push( clicked_point_x ) ;
+   y_coordinates_of_clickings.push( clicked_point_y ) ;
+
+   draw_on_canvas() ;   // This call updates the screen.
+}
+
+
+-->
+

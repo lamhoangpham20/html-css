@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>MovingBallsWithPointerCanvas.html &copy; Kari Laitinen</title>
+<!--
+   http://www.naturalprogramming.com/
+
+   2012-02-27 File created.
+   2016-02-29 Last modification.
+
+
+   This program draws three Ball objects onto the screen.
+   It is possible to move these balls with the mouse or
+   some other pointing device. The Ball objects have a method 
+   to find out whether a 'clicked' point is inside the
+   ball. In addition the Ball objects have methods for moving
+   the ball.
+
+   During execution the file Ball.js must be in the same
+   folder (directory) with this file.
+
+-->
+
+<script src="Ball.js">
+</script>
+
+<script type="text/javascript">
+
+//  Now the 'main' program begins.
+class MulticoloredBall extends Ball
+{
+   constructor( given_center_point_x,
+                given_center_point_y,
+                given_color,
+                given_second_color,
+                given_third_color )
+   {
+      super( given_center_point_x,
+             given_center_point_y,
+             given_color ) ; // calling the superclass constructor
+
+      this.second_color = given_second_color ;
+      this.third_color  = given_third_color ;
+   }
+
+   draw( context )  // This method overrides the superclass method.
+   {
+      super.draw( context ) ; // Calling the corresponding superclass method.
+
+      context.save() ;  
+
+      context.fillStyle = this.second_color ; 
+
+      context.beginPath() ;
+      context.arc( this.ball_center_point_x, this.ball_center_point_y,
+                   this.ball_diameter * 3 / 8, 0, 2 * Math.PI, true )
+      context.closePath() ;
+      context.fill() ;
+
+      context.fillStyle = this.third_color ; 
+
+      context.beginPath() ;
+      context.arc( this.ball_center_point_x, this.ball_center_point_y,
+                   this.ball_diameter / 4, 0, 2 * Math.PI, true )
+      context.closePath() ;
+      context.fill() ;
+
+      context.restore() ;
+   } 
+
+} //  End of class MulticoloredBall
+
+var first_ball  = new Ball( 200, 300, "red" ) ;
+var second_ball = new Ball( 400, 300, "green" ) ;
+var third_ball  = new Ball( 600, 300, "blue" ) ;
+var fourth_ball = new Ball( 400, 500, "Chocolate" ) ;
+var ball_being_moved  =  null ;
+var balls_on_screen = [] ;
+balls_on_screen.push( first_ball ) ;
+balls_on_screen.push( second_ball ) ;
+balls_on_screen.push( third_ball ) ;
+balls_on_screen.push( fourth_ball ) ;
+// In this program we speak about pointer positions instead
+// of mouse or cursor positions because it is possible
+// that the balls can be pointed with some other devices
+// than a mouse.
+
+var previous_pointer_position_x  =  0 ;
+var previous_pointer_position_y  =  0 ;
+
+function on_mouse_down( event )
+{
+   // The mouse or some other pointing device was
+   // pressed down in the canvas area.
+
+   var pointer_position_x = event.offsetX ;
+   var pointer_position_y = event.offsetY ;
+
+   // Now we know which point was pointed. We will 'ask' all the
+   // Ball objects whether or not the pressed point is inside
+   // the area of the ball in question.
+   if(event.ctrlKey == true)
+   {
+      if(event.shiftKey == true)
+      {
+         balls_on_screen.push(new MulticoloredBall(pointer_position_x, pointer_position_y,"lightpink","lightblue","purple"))
+      }
+      else
+      {
+      balls_on_screen.push(new Ball(pointer_position_x, pointer_position_y, "Gold")); 
+      }
+   }
+   else
+   {
+   var ball_index = balls_on_screen.length - 1 ; // index of the last ball
+   var search_for_clicked_ball_ready = false ;
+    while ( search_for_clicked_ball_ready == false )
+   {
+      if (  balls_on_screen[ ball_index ].contains_point( pointer_position_x,
+                                                            pointer_position_y ) )
+      {
+         ball_being_moved = balls_on_screen[ball_index];
+         search_for_clicked_ball_ready = true ;
+      }
+      if ( ball_index > 0 )
+      {
+         ball_index -- ;
+      }
+      else
+      {
+         search_for_clicked_ball_ready = true ;
+      }
+   }
+   if ( ball_being_moved != null ) // If a ball to be moved is found.
+   {
+      var index_of_ball_being_moved =
+      balls_on_screen.indexOf( ball_being_moved ) ;
+   // The following line removes the ball from the array.
+      balls_on_screen.splice( index_of_ball_being_moved, 1 ) ;
+   // Here you have to write a statement to push the object
+   // to the end of the array.
+      balls_on_screen.push(ball_being_moved);
+   }
+ 
+   }
+   previous_pointer_position_x  =  pointer_position_x ;
+   previous_pointer_position_y  =  pointer_position_y ;
+
+   draw_on_canvas() ;
+}
+
+
+function on_mouse_move( event )
+{
+   if ( ball_being_moved  !=  null )
+   {
+      var new_pointer_position_x = event.offsetX ;
+      var new_pointer_position_y = event.offsetY ;
+
+      var pointer_movement_x  =  new_pointer_position_x
+                                -  previous_pointer_position_x ;
+
+      var pointer_movement_y  =  new_pointer_position_y 
+                                -  previous_pointer_position_y ;
+
+      previous_pointer_position_x  =  new_pointer_position_x ;
+      previous_pointer_position_y  =  new_pointer_position_y ;
+
+      ball_being_moved.move_this_ball( pointer_movement_x, 
+                                       pointer_movement_y ) ;
+
+      draw_on_canvas() ;
+   }
+}
+
+function on_mouse_up( event )
+{
+   if ( ball_being_moved  !=  null )
+   {
+      ball_being_moved.deactivate_ball() ;
+      ball_being_moved  =  null ;
+
+      draw_on_canvas() ;
+   }
+}
+
+function draw_on_canvas()
+{
+   var canvas = document.getElementById( "canvas_for_balls" ) ;
+   var context = canvas.getContext("2d") ;
+
+   // We'll first fill the entire canvas with light color.
+
+   context.fillStyle = "LightYellow" ;
+   context.fillRect( 0, 0, canvas.width, canvas.height ) ;
+
+   for ( var ball_index = 0 ;
+   ball_index < balls_on_screen.length ;
+   ball_index ++ )
+   {
+      balls_on_screen[ ball_index ].draw( context ) ;
+   }
+}
+
+</script>
+
+<style type="text/css">
+
+   #centered
+   {
+      width: 800px;
+      height: 600px;
+      margin: 30px auto;    /* top and bottom margins are 30p;
+                               right and left margins are automatic */
+      border: 1px solid black;
+   }
+
+</style>
+</head>
+
+<body onload="draw_on_canvas()">
+
+   <div id=centered>
+      <canvas id=canvas_for_balls
+         width=800 height=600
+         onmousedown = "on_mouse_down( event )"
+         onmousemove = "on_mouse_move( event )"
+         onmouseup   = "on_mouse_up( event )">
+      </canvas>
+
+   </div>
+
+</body>
+</html>
+
+<!-- NOTES:
+
+   - It seems that onmousedrag events do not work.
+
+-->

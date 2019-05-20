@@ -1,0 +1,229 @@
+<!DOCTYPE html>  <!-- This identifies an HTML 5 document. -->
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>AnimationDemoCanvas.html &copy; Kari Laitinen</title>
+
+<!--   http://www.naturalprogramming.com/
+
+   2012-02-29 File created.
+   2014-02-06 Last modification.
+
+    This example demonstrates how animation can be created.
+    'Animation' in this program means that there is a blinking
+    ball on the screen.
+
+    More information at:
+      http://www.w3schools.com/js/js_timing.asp
+
+    There are notes at the end of this file.
+
+-->
+<script src="Ball.js">
+</script>
+<script type="text/javascript">
+
+var ball_center_point_x = 300 ;
+var ball_center_point_y = 240 ;
+
+var current_ball_color = "cyan" ;
+
+var ball_must_be_shown  =  true ;
+var current_direction = "DOWN" ;
+var first_ball  = new Ball( 300, 240 , "cyan" ) ;
+first_ball.set_diameter( 100 ) ;
+first_ball.activate_ball() ;
+var going_clockwise = true ;
+function on_key_press( event )
+{
+   going_clockwise = ! going_clockwise ;
+   
+   if ( current_direction == "DOWN" )
+   {
+      current_direction = "UP" ;
+   }
+   else if ( current_direction == "LEFT" )
+   {
+      current_direction = "RIGHT" ;
+   }
+   else if ( current_direction == "UP" )
+   {
+      current_direction = "DOWN" ;
+   }
+   else if ( current_direction == "RIGHT" )
+   {
+      current_direction = "LEFT" ;
+   }
+
+
+}
+function draw_on_canvas()
+{
+   var canvas = document.getElementById( "animation_demo_canvas" ) ;
+   var context = canvas.getContext("2d") ;
+
+   // We'll fill the entire canvas with light color, which overdraws
+   // the previous drawings.
+
+   context.fillStyle = "rgb( 255, 255, 210 )" ;  // light yellow
+   context.fillRect( 0, 0, canvas.width, canvas.height ) ;
+
+   if ( ball_must_be_shown  ==  true )
+   {
+      first_ball.draw( context );
+
+      ball_must_be_shown  =  false ;
+   }
+   else
+   {
+      ball_must_be_shown  =  true ;
+   }
+   
+   if ( going_clockwise == true )
+   {
+      if ( current_direction == "DOWN" )
+      {
+         first_ball.move_down() ;
+
+         if ( first_ball.get_ball_center_point_y()
+                                      >= canvas.height - 50 )
+         {
+            current_direction = "LEFT" ;
+         }
+      }
+      else if ( current_direction == "LEFT" )
+      {
+         first_ball.move_left() ;
+
+         if ( first_ball.get_ball_center_point_x() <= 50 )
+         {
+            current_direction = "UP" ;
+         }
+      }
+      else if ( current_direction == "UP" )
+      {
+         first_ball.move_up() ;
+
+         if ( first_ball.get_ball_center_point_y() <= 50 )
+         {
+            current_direction = "RIGHT" ;
+         }
+      }
+      else if ( current_direction == "RIGHT" )
+      {
+         first_ball.move_right() ;
+
+         if ( first_ball.get_ball_center_point_x()
+                                      >= canvas.width - 50 )
+         {
+            current_direction = "DOWN" ;
+         }
+      }
+   }
+   else
+   {
+      // We are going counter-clockwise
+
+      if ( current_direction == "DOWN" )
+      {
+         first_ball.move_down() ;
+
+         if ( first_ball.get_ball_center_point_y()
+                                      >= canvas.height - 50 )
+         {
+            current_direction = "RIGHT" ;
+         }
+      }
+      else if ( current_direction == "LEFT" )
+      {
+         first_ball.move_left() ;
+
+         if ( first_ball.get_ball_center_point_x() <= 50 )
+         {
+            current_direction = "DOWN" ;
+         }
+      }
+      else if ( current_direction == "UP" )
+      {
+         first_ball.move_up() ;
+
+         if ( first_ball.get_ball_center_point_y() <= 50 )
+         {
+            current_direction = "LEFT" ;
+         }
+      }
+      else if ( current_direction == "RIGHT" )
+      {
+         first_ball.move_right() ;
+
+         if ( first_ball.get_ball_center_point_x()
+                                      >= canvas.width - 50 )
+         {
+            current_direction = "UP" ;
+         }
+      }
+   }
+
+
+   
+   
+   
+   //  With the following method call we specify that this
+   //  method "draw_on_canvas()" will be automatically called
+   //  again after 1000 milliseconds, i.e., after one second.
+
+   //  This has the effect that "draw_on_canvas()" is executed
+   //  repeatedly once in every second. As the ball is 
+   //  not drawn during every execution, it seems to blink
+   //  on the screen.
+
+   setTimeout( "draw_on_canvas()", 100 ) ;
+}
+
+</script>
+
+<style type="text/css">
+
+   #centered
+   {
+      width: 600px;
+      height: 500px;
+      margin: 30px auto;    /* top and bottom margins are 30p;
+                               right and left margins are automatic */
+      border: 1px solid black;
+   }
+
+</style>
+</head>
+
+<body onload="draw_on_canvas()"
+onkeypress="on_key_press(event)">
+
+   <div id=centered>
+      <canvas id=animation_demo_canvas
+         width=600 height=500>
+      </canvas>
+
+   </div>
+
+</body>
+</html>
+
+<!--  
+
+    A NOTE RELATED TO HUMAN PHYSIOLOGY:
+
+    This program can be used to demonstrate the strange 
+    behaviour of our sight system. If you watch the blinking ball
+    from a short distance, you'll notice that when the ball disappears
+    from the screen you see a kind of shadow of the ball. The color
+    of the shadowish ball seems to be close to magenta, which is a
+    kind of opposite color to cyan, the color of the 'real' ball.
+    The reason for seeing this kind of shadow of the ball is in
+    our eyes. Our sight system is such that the sight cells inside
+    our eyes remember the object (i.e. the ball) that disappears,
+    but they produce the opposite color for the disappeared object.
+    (This nice feature in this program was discovered by professor
+    Matti Weckström from the University of Oulu.)
+
+-->

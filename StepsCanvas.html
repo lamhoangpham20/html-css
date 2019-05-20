@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>StepsCanvas.html &copy; Kari Laitinen</title>
+<!-- http://www.naturalprogramming.com/
+
+   2015-02-04 File created.
+   2015-02-04 Last modification.
+
+   This program shows a number of steps on the screen.
+   The steps are made of rectangles and lines.
+
+-->
+
+<script type="text/javascript">
+
+   function draw_on_canvas()
+   {
+      var canvas = document.getElementById( "canvas_for_steps" ) ;
+      var context = canvas.getContext( "2d" ) ;
+      var step_colors = [ "DarkKhaki", "Aquamarine", "LightBlue", "Khaki",
+ "Orange", "RosyBrown", "Thistle", "Tomato" ] ;
+
+
+      // We'll fill the entire canvas with light color, which overdraws
+      // any previous drawings.
+
+      context.fillStyle = "FloralWhite" ;
+
+      context.fillRect( 0, 0, canvas.width, canvas.height ) ;
+
+      var step_size = 40 ;
+      var number_of_steps_to_make = 7 ;
+
+      var step_position_x = 60 ;
+      var step_position_y = 320 ;
+      
+
+      context.fillStyle   = "Gold" ;
+      context.strokeStyle = "Chocolate" ; 
+      context.lineWidth   = 4 ;
+
+      // Inside the following loop we create steps as rectangles.
+      // The rectangles will form ascending steps. We'll start by first making
+      // the lowest step.
+      
+      for ( var step_counter = 0 ; 
+                step_counter < number_of_steps_to_make ;
+                step_counter ++ )
+      {
+         context.fillStyle = step_colors[ step_counter ] ;
+         context.fillRect(
+                     step_position_x,
+                     step_position_y,
+                     ( number_of_steps_to_make - step_counter ) * 2 * step_size,
+                     step_size ) ;
+
+         context.strokeRect(
+                     step_position_x,
+                     step_position_y,
+                     ( number_of_steps_to_make - step_counter ) * 2 *  step_size,
+                     step_size ) ;
+
+         step_position_x = step_position_x + step_size ;
+         step_position_y = step_position_y - step_size ;
+      }
+
+      step_position_x = 950 ;
+      step_position_y =  80 ;
+
+      // We'll start a new drawing path and inside the following loop
+      // we'll specify lines that will belong to the drawing path.
+      // The lines will form descending steps.
+      
+      context.beginPath() ;
+      
+      for ( var step_counter = 0 ;
+                step_counter < number_of_steps_to_make ;
+                step_counter ++ )
+      {  
+         context.moveTo( step_position_x,
+                         step_position_y ) ;
+         context.lineTo( step_position_x - step_size,
+                         step_position_y ) ;
+
+             step_position_x = step_position_x - step_size ;
+
+         context.moveTo( step_position_x,
+                         step_position_y ) ;
+         context.lineTo( step_position_x,
+                         step_position_y + step_size ) ;
+         step_position_y = step_position_y + step_size ;
+         }
+
+      context.stroke() ;  // This will draw all the lines of the path.
+   
+      step_position_x = 670 ;
+      step_position_y =  360 ;
+   for ( var step_counter = 0 ;
+                step_counter < number_of_steps_to_make ;
+                step_counter ++ )
+      {
+         for ( var ball_counter = 0 ;
+                   ball_counter < number_of_steps_to_make - step_counter ;
+                   ball_counter ++ )
+         {
+            var ball_center_x = step_position_x + step_size / 2
+                                     + ball_counter * step_size ;
+            var ball_center_y = step_position_y - step_size / 2 ;
+            var random_color_as_int = Math.floor( Math.random() * 0xFFFFFF ) ;
+            // We'll convert the int value to a hexadecimal string, ensuring that
+            // there will be enough leading zeroes so that the string length is 6.
+            var random_color_as_string = "000000" + random_color_as_int.toString( 16 ) ;
+            random_color_as_string = random_color_as_string.slice(random_color_as_string.length - 6 ) ;
+            context.fillStyle = "#" + random_color_as_string ;
+            console.log( "\n " + random_color_as_string ) ;
+
+
+            context.beginPath() ;
+            context.arc( ball_center_x, ball_center_y, step_size / 2, 0, 2 * Math.PI, true ) ;
+            context.closePath() ;
+            context.fill() ;  // Fill the ball with current filling color
+         }
+
+         step_position_y = step_position_y - step_size ;
+         step_position_x = step_position_x + step_size ;
+      }
+   }
+
+
+   
+</script> <!-- End of JavaScript code. -->
+
+<style type="text/css">
+
+   #centered
+   {
+      width:  1000px;
+      height: 480px;
+      margin: 30px auto;    /* top and bottom margins are 30p;
+                               right and left margins are automatic */
+      border: 1px solid black;
+   }
+
+</style>  <!-- End of CSS style definitions. -->
+</head>
+
+<body onload="draw_on_canvas()">
+
+   <!-- The HTML body of this document has a single <div> element
+        that is 'connected' to the CSS style definition with the id
+        "centered". Inside the <div> element we have the <canvas>
+        element. -->
+
+   <div id=centered>
+      <canvas id=canvas_for_steps width=1000 height=480>
+      </canvas>
+   </div>
+</body>
+</html>

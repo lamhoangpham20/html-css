@@ -1,0 +1,60 @@
+body{
+    background-image: url("http://hdmotion.vn/wp-content/uploads/2014/07/Sequence-01.Still019.jpg");
+    background-size:cover;
+    background-repeat: none;
+}
+.logo
+{
+    width: 30px;
+}
+.container
+{
+    margin: auto;
+    width: 80%;
+
+}
+.float
+{
+    float: left;
+}
+.box
+{
+    float: left;
+    width: 33.33%;
+    background-color: aqua;
+    box-sizing: border-box;
+    border:  5px solid white;
+}
+.clearer
+{
+    clear: both;
+} 
+}
+.flexbox{
+    display: flex;
+}
+
+    ul {
+        position: relative;
+        left:300px;
+        top: -30px;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+li 
+{
+    font-size: 25px;
+    display: inline ;
+    overflow: hidden;
+}
+.header{
+    width : 100%;
+    border: 5px solid black;
+    height: 100px;
+    background-image: url(./IMG_2168.JPG);
+    background-size: cover;
+}
+*{
+    box-sizing: border-box;
+}

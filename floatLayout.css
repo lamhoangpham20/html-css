@@ -1,0 +1,64 @@
+body{
+    background-color: yellow;
+}
+.container
+{
+    border: 1px solid blue;
+    width: 500px;
+    margin-right: auto;
+    margin-left: auto;
+}
+.sidemenu
+{
+    border: 1px solid black;
+    width: 20%;
+    height: 300px;
+    box-sizing: border-box;
+}
+.content
+{
+    border: 1px solid black;
+    width: 80%;
+    height: 300px;
+    box-sizing: border-box;
+}
+.float
+{
+    float: left;
+}
+.clearer
+{
+    clear: both;
+}
+.header
+{
+    height: 5px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 25px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.footer
+{
+    height: 50px;
+}
+.logo
+{
+    height: 100px;
+    width: 100px ;
+}
+.sign-in
+{
+    font-size: 12px;
+    position: absolute;
+    top : 4px;
+    right: 4px;
+}
+.flexbox
+{
+    
+    width 33.33%
+    float: left;
+    background-repeat:vertical
+}

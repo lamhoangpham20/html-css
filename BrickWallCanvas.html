@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>BrickWallCanvas.html &copy; Kari Laitinen</title>
+<!-- 
+   2015-02-12 This file was created for http://www.naturalprogramming.com/
+   2015-02-12 Last modification.
+
+   This program draws a wall of bricks on a canvas.
+   
+-->
+<script type="text/javascript">
+
+
+function draw_on_canvas()
+{
+   var canvas = document.getElementById( "brick_wall_canvas" ) ;
+   var context = canvas.getContext( "2d" ) ;
+
+   context.fillStyle = "Orange" ; // background color is the mortar color
+   context.fillRect( 0, 0, canvas.width, canvas.height ) ;
+
+   context.fillStyle = "FireBrick" ; // brick color
+   
+   var brick_position_x = 0 ; // first brick will be drawn to the
+   var brick_position_y = 0 ; // upper left corner of the canvas
+   var brick_height = 28 ;
+   var brick_length = 112 ;
+   var gap_between_bricks = 4 ; // this is the thickness of mortar
+   var row_counter = 0 ;
+   
+   while ( brick_position_y < canvas.height )
+   {
+      // The following while loop draws a row of bricks.
+   
+      while ( brick_position_x < canvas.width )
+      {
+         context.fillRect( brick_position_x, brick_position_y,
+                           brick_length, brick_height ) ; // this draws a brick
+         brick_position_x = brick_position_x + brick_length
+                            + gap_between_bricks ;
+      }
+      
+      // Now we must prepare to do the next row of bricks.
+      // Every second row must start with a half brick.
+      row_counter ++ ;
+      
+      if ( row_counter % 2 == 1 ) // Is this an odd row of bricks?
+      {
+         brick_position_x = - brick_length / 2 ;
+      }
+      else
+      {
+         brick_position_x = 0 ;
+      }
+      
+      brick_position_y = brick_position_y + brick_height
+                         + gap_between_bricks ;
+   }
+   
+}
+
+</script> <!-- End of JavaScript code. -->
+
+<style type="text/css">
+
+   #centered
+   {
+      width:  960px;
+      height: 744px;
+      margin: 30px auto;    /* top and bottom margins are 30p;
+                               right and left margins are automatic */
+      border: 1px solid black;
+   }
+
+</style>  <!-- End of CSS style definitions. -->
+</head>
+
+<body onload="draw_on_canvas()">
+
+   <div id=centered>
+      <canvas id=brick_wall_canvas width=960 height=744>
+      </canvas>
+   </div>
+</body>
+</html>

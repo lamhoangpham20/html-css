@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+
+<!-- SinglePictureCanvas.html Copyright (c) Kari Laitinen
+
+   2012-03-15 This file was created for http://www.naturalprogramming.com/
+   2014-02-06 Last modification.
+
+   This program shows how images can be drawn on a canvas.
+
+   Useful web pages are:
+     http://www.w3schools.com/tags/ref_canvas.asp
+     http://www.w3schools.com/tags/canvas_drawimage.asp
+
+-->
+
+<html>
+<head>
+<meta charset="ISO-8859-1">
+
+<title>SHOWING A PICTURE IN DIFFERENT SIZES"</title>
+<script src="importables/sprintf.js"></script>
+<script type="text/javascript">
+
+var code_of_last_pressed_key = 63;
+var picture_enlargement= 1.0; 
+var picture_to_show = new Image() ;
+var picture_index = 0;
+var  picture_file_names  = [ "images/gauguin_two_women_on_the_beach_1891.jpg", 
+                             "images/yellow_field_by_vincent_van_gogh.jpg",
+                             "images/night_watch_by_rembrandt.jpg",
+                             "images/persistence_of_memory_by_dali.jpg",
+                             "images/demoiselles_de_avignon_by_picasso.jpg",
+                             "images/mona_lisa_by_leonardo.jpg"
+                              ] ; 
+                              picture_to_show.src = picture_file_names[ picture_index] ;
+function on_key_down( event )
+{
+   code_of_last_pressed_key = event.which ;
+
+   console.log( "\n on_key_down()  " + event.which.toString( 16 ) ) ;
+   
+   if ( code_of_last_pressed_key  ==  38 )
+   {
+      picture_enlargement = picture_enlargement + 0.1;
+   }
+   else if ( code_of_last_pressed_key  ==  40 )
+   {
+      picture_enlargement = picture_enlargement - 0.1;
+   }
+   else if ( code_of_last_pressed_key  ==  39 )
+   {  
+      picture_index ++;
+      if(picture_index > 5)
+      {
+         picture_index = 0;
+      }
+      
+   }
+   else if ( code_of_last_pressed_key  ==  37 )
+   {
+      picture_index --;
+      if(picture_index < 0 )
+      {
+         picture_index = 5;
+      }  
+       
+   }
+   picture_to_show.src = picture_file_names[ picture_index] ;
+   draw_on_canvas() ;
+}
+
+
+
+function draw_on_canvas()
+{
+   var canvas = document.getElementById( "picture_canvas" ) ;
+   var context = canvas.getContext( "2d" ) ;
+
+   // We'll fill the entire canvas with light color, which overdraws
+   // the previous drawings.
+   context.fillStyle = "Orange" ; // background color is the mortar color
+   context.fillRect( 0, 0, canvas.width, canvas.height ) ;
+   
+   context.fillStyle = "FireBrick" ;
+   var brick_position_x = 0 ; // first brick will be drawn to the
+   var brick_position_y = 0 ; // upper left corner of the canvas
+   var brick_height = 28 ;
+   var brick_length = 112 ;
+   var gap_between_bricks = 4 ; // this is the thickness of mortar
+   var row_counter = 0 ;
+   
+   while ( brick_position_y < canvas.height )
+   {
+      // The following while loop draws a row of bricks.
+   
+      while ( brick_position_x < canvas.width )
+      {
+         context.fillRect( brick_position_x, brick_position_y,
+                           brick_length, brick_height ) ; // this draws a brick
+         brick_position_x = brick_position_x + brick_length
+                            + gap_between_bricks ;
+      }
+      
+      // Now we must prepare to do the next row of bricks.
+      // Every second row must start with a half brick.
+      row_counter ++ ;
+      
+      if ( row_counter % 2 == 1 ) // Is this an odd row of bricks?
+      {
+         brick_position_x = - brick_length / 2 ;
+      }
+      else
+      {
+         brick_position_x = 0 ;
+      }
+      
+      brick_position_y = brick_position_y + brick_height
+                         + gap_between_bricks ;
+   }
+
+   
+
+   var picture_width  = picture_to_show.width ;
+   var picture_height = picture_to_show.height ;
+   
+   
+   var desired_picture_width = picture_enlargement * picture_width ;
+   var desired_picture_height = picture_enlargement * picture_height ;
+   var picture_position_x  =  480 - desired_picture_width/2 ;
+   var picture_position_y  =  372 - desired_picture_height/2 ;
+
+   //  The following statement shows the picture in its natural size.
+   context.fillRect( picture_position_x - 1 , picture_position_y - 1, 
+                     desired_picture_width + 2 , desired_picture_height + 2) 
+   context.strokeRect(picture_position_x - 1 , picture_position_y - 1, 
+                     desired_picture_width + 2 , desired_picture_height + 2)
+   context.drawImage( picture_to_show, picture_position_x,
+                     picture_position_y, desired_picture_width ,desired_picture_height  ) ;
+   
+   
+   
+   
+}
+                    
+ 
+   //  Next we'll show a smaller version of the picture.
+
+
+</script> <!-- End of JavaScript code. -->
+
+<style type="text/css">
+
+   #centered
+   {
+      width:  960px;
+      height: 744px;
+      margin: 30px auto;    /* top and bottom margins are 30p;
+                               right and left margins are automatic */
+      border: 1px solid black;
+   }
+
+</style>  <!-- End of CSS style definitions. -->
+</head>
+
+<body onload="draw_on_canvas()"
+onkeydown  = "on_key_down( event )"
+>
+
+   <div id=centered>
+      <canvas id=picture_canvas width=960 height=744>
+      </canvas>
+   </div>
+</body>
+</html>
